@@ -1,23 +1,35 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import Page from './components/page/Page';
 import './App.css';
 
 function App() {
+  const [loading, setLoading] = useState(false);
+  const [pathways, setPathways] = useState([]);
+
+  useEffect(() => {
+    const loadPathways = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get('https://www.blackbullion.com/api/_dev/pathways');
+        setPathways(response.data);
+      } catch (error) {
+        console.error('Failed to fetch pathways:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPathways();
+ }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {loading ? (
+        <h4>Loading...</h4>
+      ) : (
+        <Page data={pathways} itemsPerPage={20} />
+      )}
     </div>
   );
 }
