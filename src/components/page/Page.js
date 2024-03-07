@@ -1,34 +1,35 @@
 import React, { useState } from 'react';
 import Card from '../card/Card';
+import Pagination from '../pagination/Pagination';
+import Options from '../options/Options';
+import './page.css';
 
-const Page = ({ data, itemsPerPage }) => {
+const Page = ({ pathways, pathwaysPerPage, handleSortChange, handleFilterChange }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentData = data.slice(startIndex, endIndex);
+  const startIndex = (currentPage - 1) * pathwaysPerPage;
+  const endIndex = startIndex + pathwaysPerPage;
+  const currentPathways = pathways.slice(startIndex, endIndex);
+  const pages = Math.ceil(pathways.length / pathwaysPerPage);
 
   return (
     <div>
-      {currentData.map(({ id, title, url, intro, duration, image, link, type}) => (
-        <Card
-          key={id}
-          title={title}
-          url={url}
-          intro={intro}
-          duration={duration}
-          image={image}
-          link={link}
-          type={type}
-        />
-      ))}
-      <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
-        Previous
-      </button>
-      <span>{currentPage}</span>
-      <button onClick={() => setCurrentPage(currentPage + 1)} disabled={endIndex >= data.length}>
-        Next
-      </button>
+      <Options handleSortChange={handleSortChange} handleFilterChange={handleFilterChange} />
+      <div className='page'>
+        {currentPathways.map(({ id, title, url, intro, duration, image, type, hasSummativeAssessment}) => (
+          <Card
+            key={id}
+            title={title}
+            url={url}
+            intro={intro}
+            duration={duration}
+            image={image}
+            type={type}
+            hasSummativeAssessment={hasSummativeAssessment}
+          />
+        ))}
+      </div>
+      <Pagination currentPage={currentPage} pages={pages} setCurrentPage={setCurrentPage} />
     </div>
   );
 };

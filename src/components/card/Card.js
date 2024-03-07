@@ -1,15 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { capitalizeFirstLetter } from '../../helpers/capitalize';
+import './card.css';
 
-function Card({title, url, intro, duration, image, link, type}) {
+const Card = ({title, url, intro, duration, image, type, hasSummativeAssessment}) => {
+  const [descriptionStyle, setDescriptionStyle] = useState({});
+  const titleRef = useRef(null);
+
+  useEffect(() => {
+    const titleHeight = titleRef.current.getBoundingClientRect().height;
+    const totalHeight = 400;
+    const availableHeightForDescription = totalHeight - titleHeight;
+
+    setDescriptionStyle({
+      height: `${availableHeightForDescription}px`,
+      overflow: 'hidden',
+      display: '-webkit-box',
+      WebkitBoxOrient: 'vertical',
+    });
+  }, [title]);
+
   return (
-    <div>
-      <img src={image} alt={title} />
-      <p>{type}</p>
-      <p>{duration}</p>
-      <h2>{title}</h2>
-      <p>{intro}</p>
-      <a href={url} target="_blank" rel="noopener noreferrer">View Pathway</a>
-      <hr />
+    <div className='card'>
+      <div className='card-image'>
+        <img src={image} alt={title} />
+      </div>
+      <p className='card-info'>{capitalizeFirstLetter(type)} - {duration}</p>
+      <h2 ref={titleRef} className='card-title'>{title}</h2>
+      <div className='card-intro' style={descriptionStyle}>{intro}</div>
+      <a href={url} target="_blank" rel="noopener noreferrer" className='card-url'>View Pathway</a>
     </div>
   );
 }
